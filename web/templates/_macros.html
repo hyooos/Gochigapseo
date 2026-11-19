@@ -1,0 +1,15 @@
+{% macro photo(p, name, cls="ph") -%}
+{% if p %}<figure class="{{ cls }}-wrap"><img class="{{ cls }}" src="{{ p.url }}" alt="{{ name }} {{ p.credit }}" loading="lazy"
+  onerror="this.closest('figure').classList.add('broken')"><figcaption class="credit">{{ p.credit }}</figcaption></figure>
+{%- else %}<div class="{{ cls }} none">사진 없음</div>{% endif %}
+{%- endmacro %}
+
+{% macro pills(fs) -%}
+{% for x in fs %}<span class="f {{ x.cls }}{{ ' need' if x.need }}" title="{{ x.label }} {{ x.word }}{{ ' (꼭 필요)' if x.need }}">{{ x.label }} {{ x.mark }}</span>{% endfor %}
+{%- endmacro %}
+
+{% macro vbadge(v) -%}<span class="v {{ v.cls }}">{{ v.mark }} {{ v.word }}</span>{%- endmacro %}
+
+{% macro asks(items, cls="ask") -%}
+{% for q in items %}<button class="btn {{ cls }}" type="button" data-ask="{{ q.q if q.q is defined else q }}">{{ q.label if q.label is defined else q }}</button>{% endfor %}
+{%- endmacro %}

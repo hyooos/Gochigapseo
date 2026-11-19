@@ -1,0 +1,28 @@
+# 보류 세트(hold-out): 규칙·낱말을 고칠 때 보지 않는 질문. 결과 설명자료에 '처음 보는 질문' 정답률로 따로 보고한다.
+# 개발 세트(questions.yaml)와 표현을 일부러 다르게 썼다. 기대값은 2026-11-16 결과를 보기 전에 사람이 판단해서 적었다.
+# 틀린 문항을 고쳐서 맞추면 보류 세트의 뜻이 없어진다 → 고치려면 그 문항을 개발 세트로 옮기고 새 보류 문항을 쓴다.
+# expect 키는 questions.yaml과 같다. pytest에서는 형식만 검사하고 정답 여부는 scripts/eval_golden.py가 보고한다.
+- q: 아버지가 휠체어 타셔서 이틀 동안 서귀포 돌고 싶어요
+  expect: {intent: course, region: 서귀포시, days: 2, mobility: wheelchair_manual}
+- q: 다리가 불편하신 엄마랑 애월 하루 여행
+  expect: {intent: course, region: 애월읍, days: 1, mobility: walker}
+- q: 시각장애인 친구와 함께 갈 만한 제주시 관광지
+  expect: {intent: access, region: 제주시, vision: blind}
+- q: 유아차로 가기 좋은 박물관 있을까?
+  expect: {intent: access, mobility: stroller, interests: [museum]}
+- q: 청각장애 있는 동생이랑 3박 4일 코스 부탁해
+  expect: {intent: course, days: 4, hearing: deaf}
+- q: 서귀포시 동별로 경사로 있는 관광지 몇 곳인지
+  expect: {intent: status, region: 서귀포시}
+- q: 무장애 관광지 통계를 시별로 비교해줘
+  expect: {intent: status}
+- q: 휠체어 렌트 가능한 곳 알려줘
+  expect: {intent: access}
+- q: 지금 비 와? 우산 챙겨야 해?
+  expect: {intent: unsupported}
+- q: 버스 타고 성산 1박2일, 할아버지 모시고
+  expect: {intent: course, region: 성산읍, days: 2, transport: bus, mobility: senior}
+- q: 중문에서 차로 20분 안쪽만 다니는 하루 일정, 휠체어
+  expect: {intent: course, region: 중문동, days: 1, max_ride_min: 20, mobility: wheelchair_manual}
+- q: 11월 말에 유모차랑 표선 여행 코스
+  expect: {intent: course, month: 11, region: 표선면, mobility: stroller}

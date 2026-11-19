@@ -1,0 +1,99 @@
+# 내부 표준 스키마와 열 별칭.
+# 어떤 원본(데이터허브 CSV, 센터 CSV)이 와도 로더가 아래 표준 열 이름으로 바꾼 뒤 에이전트에 넘긴다.
+# 에이전트는 표준 이름만 쓴다.
+# ⚠️ 실제 원본 열 이름은 파일을 받아 확인한 뒤 aliases에 추가한다. 추측으로 넣지 않는다. [미확인]
+#
+# 시설 값(acc_toilet 등)은 세 가지다: 1 = 있음 확인, 0 = 없음 확인, 빈칸 = 자료에 언급 없음(정보 없음).
+# '정보 없음'을 '없음'으로 바꾸지 않는다 (없는 시설로 단정하면 이용자를 잘못 안내한다).
+tables:
+  places:              # 무장애 관광지·코스 1곳 = 1행 (scripts/convert_barrierfree.py가 만든다)
+    required: [place_id, name, lat, lng]
+    columns:
+      place_id: []
+      name: [장소명, 관광지명]
+      kind: []                 # 관광지 | 코스
+      category: []             # 실내 전시, 테마파크, 숲길, 해변, 해안·포구, 오름, 올레길, 마을, 공원, 기타
+      indoor: []               # 1 실내 중심 / 0 실외 중심 / 빈칸 모름
+      region: [시군]           # 제주시 | 서귀포시
+      emd: [읍면동]
+      lat: [위도]
+      lng: [경도]
+      addr: [주소]
+      acc_toilet: []           # 장애인 화장실
+      acc_parking: []          # 장애인 전용 주차
+      wheelchair_rental: []
+      stroller_rental: []
+      ramp: []
+      elevator: []
+      braille: []              # 점자 안내·점자블록
+      audio_guide: []          # 음성 안내
+      n_points: []             # 조사 지점 수
+      n_stairs: []             # 계단이 기록된 지점 수
+      n_threshold: []          # 턱·단차가 기록된 지점 수
+      n_inaccessible: []       # 접근·진입 불가가 기록된 지점 수
+      n_rough: []              # 노면 불량(울퉁불퉁·자갈·파손 등)이 기록된 지점 수
+      max_slope_deg: []        # 기록된 경사 중 최댓값(도). 기록이 없으면 빈칸
+      n_slope_records: []
+      fee_won: []              # 1인 일반(성인) 입장료(원, 조사 당시). 코스 관람료 칸·관광지 문서 관람료 줄에서 하나로 정해질 때만. 모르면 빈칸
+      # ↓ data/processed 정리본에서만 오는 열 (빈칸 = 자료 없음)
+      rec_wheelchair_manual: []   # 코스 조사자 추천 대상(rec_* 8개): Y / Y(동반)=보호자·동행인 동반 시 추천 / N=비추천. 코스만
+      route: []                # 추천 동선(조사자 기록, 원문). 코스만
+      toilet_location: []      # 장애인 화장실 위치(코스 '있음·유'일 때만). alt_toilet = 주변(대체) 화장실(장애인용 미확인)
+      parking_location: []
+      fee_note: []             # 입장료 원문(할인 조건 등)
+      hours_note: []           # 관람시간 원문(관광지 문서 13곳)
+      data_date: []            # 자료 기준일 (YYYY-MM-DD)
+      date_basis: []           # data_date가 무엇인지: 기준일자(조사 자료의 데이터기준일자) / 등록일(데이터허브 데이터셋 등록일). 빈칸 = 모름
+      source_file: []
+      location_note: []        # 예: '읍면동은 좌표로 추정'
+      ev_acc_toilet: []        # ev_<시설>: 그 시설을 '있음/없음'으로 본 근거 문장(원문 일부, 60자 안)
+      ev_acc_parking: []
+      ev_wheelchair_rental: []
+      ev_stroller_rental: []
+      ev_ramp: []
+      ev_elevator: []
+      ev_braille: []
+      ev_audio_guide: []
+  place_points:        # 조사 지점 1개 = 1행
+    required: [place_id, seq, detail]
+    columns:
+      place_id: []
+      seq: []
+      lat: [위도]
+      lng: [경도]
+      point_name: []
+      detail: []
+      slope_deg: []
+      stairs: []
+      threshold: []
+      inaccessible: []
+      rough: []
+      toilet: []
+      parking: []
+      recommended: []
+  # ── 센터 CSV (반출 가능 표, 명세서 v13 열 이름 그대로) ─────────────────────
+  weather_stations:    # 5-01 날씨 관측소 정보
+    required: [observatory_code, lat, lng]
+    columns:
+      observatory_code: []
+      observatory_name: []
+      lat: [latitude]
+      lng: [longitude]
+  weather_daily:       # 5-02 일일 날씨 정보
+    required: [base_date, observatory_code, daily_rainfall]
+    columns:
+      base_date: []
+      observatory_code: []
+      average_temperature: []
+      lowest_temperature: []
+      highest_temperature: []
+      daily_rainfall: []
+      maximum_wind_speed: []
+      average_wind_speed: []
+  bus_stops:           # 3-03 버스 정류소 정보
+    required: [stop_id, lat, lng]
+    columns:
+      stop_id: [bus_station_id]
+      stop_nm: [bus_station_name]
+      lat: [latitude]
+      lng: [longitude]

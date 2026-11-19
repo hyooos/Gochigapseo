@@ -1,0 +1,7 @@
+<div class="head">
+  <h1 class="rtitle">{{ r.title }}</h1>
+  <p class="facts">{% for f in r.facts %}<span>{{ f }}</span>{% endfor %}</p>
+</div>
+{% if r.charts %}
+<div class="charts">{% for c in r.charts %}<figure><img src="{{ c }}" alt="현황 그래프 {{ loop.index }}" loading="lazy"></figure>{% endfor %}</div>
+{% endif %}

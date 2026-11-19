@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000">
+  <!-- 오른쪽 위에서 바다로 비치는 햇빛: 끝이 가늘어지는 옅은 빛줄기 몇 개 + 물 위 반짝임(윤슬) -->
+  <defs>
+    <linearGradient id="b" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffbe6" stop-opacity=".85"/>
+      <stop offset=".55" stop-color="#ffffff" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#b)">
+    <path d="M1400 0 L1330 0 L620 1000 L700 1000 Z" opacity=".85"/>
+    <path d="M1400 40 L1400 110 L760 1000 L690 1000 Z" opacity=".6"/>
+    <path d="M1260 0 L1215 0 L380 860 L430 860 Z" opacity=".62"/>
+    <path d="M1400 220 L1400 260 L980 1000 L935 1000 Z" opacity=".5"/>
+    <path d="M1130 0 L1100 0 L240 640 L275 640 Z" opacity=".45"/>
+  </g>
+  <g stroke="#ffffff" stroke-linecap="round" stroke-width="2.4" opacity=".7">
+    <path d="M980 520 h26"/><path d="M1030 548 h14"/><path d="M890 610 h20"/><path d="M1120 470 h18"/>
+    <path d="M760 690 h24"/><path d="M820 730 h12"/><path d="M1180 600 h22"/><path d="M640 790 h18"/>
+  </g>
+</svg>

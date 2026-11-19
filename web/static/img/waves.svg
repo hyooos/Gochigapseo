@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="170" viewBox="0 0 260 170">
+  <!-- 바탕 파도 무늬(반복 타일). 크기·자리를 조금씩 달리해 벽지처럼 보이지 않게, 글자 대비를 해치지 않게 옅게 -->
+  <g fill="none" stroke-linecap="round">
+    <g stroke="#79b2d4" stroke-width="2.2" stroke-opacity=".34">
+      <path d="M14 30 q11 -10 22 0 t22 0"/>
+      <path d="M150 92 q9 -8 18 0 t18 0 t18 0"/>
+      <path d="M62 146 q8 -7 16 0 t16 0"/>
+    </g>
+    <g stroke="#ffffff" stroke-width="2.2" stroke-opacity=".8">
+      <path d="M19 37 q8 -6 16 0"/>
+      <path d="M155 99 q7 -5 14 0"/>
+      <path d="M66 152 q6 -5 12 0"/>
+    </g>
+  </g>
+</svg>

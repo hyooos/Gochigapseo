@@ -1,0 +1,94 @@
+{% import "_macros.html" as m %}
+<div class="grid">
+  <div class="mapcol">
+    <figure class="mapbox" style="margin:0">
+      {% if r.kakao %}<div class="maptabs" role="tablist" aria-label="지도 종류">
+        <button type="button" role="tab" aria-selected="true" data-maptab="kakao">카카오 지도(실제 길)</button>
+        <button type="button" role="tab" aria-selected="false" data-maptab="art">그림 지도</button></div>{% endif %}
+      <div class="mapart"{% if r.kakao %} hidden{% endif %}>{{ r.map | safe }}
+      <div class="zoombar" role="group" aria-label="지도 확대·축소">
+        <button type="button" data-zoom="in" aria-label="확대">+</button><button type="button" data-zoom="out" aria-label="축소">−</button>
+        <button type="button" data-zoom="reset" class="txt">처음 위치</button></div>
+        <p class="zoomhint">마우스 휠로 확대·축소, 끌어서 이동</p></div>
+      {% if r.kakao %}<iframe class="mapkakao" title="카카오 지도" data-srcdoc="{{ r.kakao }}"></iframe>{% endif %}
+      <figcaption class="mapkey">
+        {% for d in r.days %}<span><i style="background:{{ d.color }}"></i>{{ d.day }}일차</span>{% endfor %}
+        {% if r.has_meal %}<span><i class="k-meal"></i>식당</span>{% endif %}
+        {% if r.has_lodge %}<span><i class="k-lodge"></i>숙소</span>{% endif %}
+        {% if r.bus %}<span><i class="k-bus"></i>버스 정류소</span>{% endif %}
+      </figcaption>
+      <p class="mapnote">{% if r.bus %}버스는 노선 정보가 없어 장소 사이를 점선(직선)으로 이었고, 장소마다 가장 가까운 정류소를 작은 회색 네모로 표시했어요. 이동 시간은 직선거리와 버스 대기 시간으로 어림한 값이에요.
+        {% elif r.road %}실선은 카카오 길찾기의 실제 도로, 점선은 길찾기를 못 받아 직선으로 이은 구간이에요(그 구간 이동 시간은 추정).
+        {% else %}점선은 장소를 직선으로 이은 것이고, 이동 시간은 직선거리로 어림했어요(카카오 길찾기 키가 있으면 실제 도로로 그려요).{% endif %}
+        지도의 번호를 누르면 옆 일정에서 그 장소 카드를 찾아 보여줘요.</p>
+    </figure>
+  </div>
+
+  <div class="days">
+    {% for d in r.days %}
+    <section class="day" style="--day: {{ d.color }}" aria-labelledby="day{{ d.day }}">
+      <div class="day-h">
+        <h2 id="day{{ d.day }}">{{ d.day }}일차</h2>
+        {% if d.date %}<span class="date">{{ d.date }}</span>{% endif %}
+        {% if d.changed %}<span class="chg">바뀐 날</span>{% endif %}
+        <span class="sum">{{ d.count }}곳, 이동 합계 약 {{ d.move_total }}분</span>
+      </div>
+      <ol class="flow">
+        {% for f in d.flow %}
+          {% if f.type == "place" %}
+          <li class="leg">{{ f.move }}</li>
+          <li class="place" data-num="{{ f.num }}">
+            <span class="seq" aria-hidden="true">{{ f.num }}</span>
+            <article class="card">
+              {{ m.photo(f.photo, f.name) }}
+              <div>
+                <div class="t">
+                  <h3><span class="sr">{{ f.num }}번 </span>{{ f.name }}{% if f.new %} <span class="newtag">새로</span>{% endif %}</h3>
+                  <span class="v {{ f.verdict.cls }}">{{ f.verdict.mark }} {{ f.verdict.word }}</span>
+                </div>
+                {% if f.where or f.fee %}<p class="where">{{ f.where }}{% if f.where and f.fee %}, {% endif %}{{ f.fee or '' }}</p>{% endif %}
+                <div class="row">
+                  {% for x in f.facilities %}<span class="f {{ x.cls }}{{ ' need' if x.need }}" title="{{ x.label }} {{ x.word }}{{ ' (꼭 필요)' if x.need }}">{{ x.label }} {{ x.mark }}</span>{% endfor %}
+                  {% if f.call %}<span class="call" title="이동 조건에 중요한 정보가 자료에 없어요">방문 전 전화 확인</span>{% endif %}
+                </div>
+                <button class="btn quiet more" type="button" data-open="{{ f.place_id }}" data-key="{{ r.key }}">자세히 보기</button>
+              </div>
+            </article>
+          </li>
+          {% elif f.kind == "none" %}
+          <li class="stopby none">
+            <span class="ic" aria-hidden="true"></span>
+            <div class="box">
+              <p class="k">{{ f.slot }}</p>
+              <p class="d">{{ f.why }} 장소의 '자세히 보기'에서 근처 가게를 찾아볼 수 있어요.</p>
+            </div>
+          </li>
+          {% else %}
+          <li class="stopby {{ f.kind }}">
+            <span class="ic" aria-hidden="true">{{ icon(f.kind) | safe }}</span>
+            <div class="box">
+              <div class="sb-top">
+                <p class="sb-name"><span class="k">{{ f.slot }}</span> <span class="nm">{{ f.name }}</span>{% if f.verdict %} <span class="v {{ f.verdict.cls }}">{{ f.verdict.mark }} {{ f.verdict.word }}</span>{% endif %}</p>
+                {% if f.phone %}<a class="tel" href="tel:{{ f.tel }}">전화 {{ f.phone }}</a>{% else %}<span class="tel none">전화번호 없음</span>{% endif %}
+              </div>
+              <p class="sb-chips"><span class="f {{ f.toilet_cls }}">{{ f.toilet }}</span><span class="f {{ f.entry_cls }}">{{ f.entry_chip }}</span></p>
+              {% if f.where %}<p class="sb-where">{{ f.where }}</p>{% endif %}
+              <details class="sb-more"><summary>더 보기 <span>{{ f.more_hint }}</span></summary>
+                <dl>
+                  {% if f.entry_note %}<dt>출입 메모</dt><dd>{{ f.entry_note }}</dd>{% endif %}
+                  {% if f.reasons %}<dt>고른 이유</dt><dd>{{ f.reasons | join(", ") }}</dd>{% endif %}
+                  {% if f.calls %}<dt>전화로 물어볼 말</dt><dd><ul>{% for q in f.calls %}<li>{{ q }}</li>{% endfor %}</ul></dd>{% endif %}
+                  <dt>지도에서 찾기</dt><dd><a href="{{ f.map }}" target="_blank" rel="noopener">카카오맵</a> · <a href="{{ f.naver }}" target="_blank" rel="noopener">네이버 지도(사진·후기)</a></dd>
+                </dl>
+              </details>
+              <p class="sb-src">{{ f.source }} · 가기 전에 영업 여부를 전화로 확인하세요</p>
+            </div>
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ol>
+    </section>
+    {% endfor %}
+  </div>
+</div>
+

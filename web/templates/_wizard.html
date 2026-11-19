@@ -1,0 +1,68 @@
+{# 세 단계 입력. 값은 JS가 모아 /api/trip 으로 보낸다(JSON). 이전에 고른 값(w.v)을 채워 둔다. #}
+{% set v = wiz.v %}
+{% macro opts(name, items, multi=True, sel=None, excl=False) -%}
+<div class="opts" role="group" data-name="{{ name }}"{{ ' data-none=1' if excl }}>
+{% for k, label in items.items() %}
+  {% set on = (k in sel) if multi else (k|string == sel|string) %}
+  <label class="opt"><input type="{{ 'checkbox' if multi else 'radio' }}" name="{{ name }}" value="{{ k }}" {{ 'checked' if on }}><span>{{ label }}</span></label>
+{% endfor %}
+</div>
+{%- endmacro %}
+<form class="wizard" id="wizard" aria-labelledby="wizT" data-step="0">
+  <h2 id="wizT" class="sr">조건 고르기</h2>
+  <ol class="wsteps" role="tablist">
+    <li><button type="button" role="tab" data-go="0" aria-selected="true"><b>1</b> 누가 가나요?</button></li>
+    <li><button type="button" role="tab" data-go="1" aria-selected="false"><b>2</b> 어떻게 다닐까요?</button></li>
+    <li><button type="button" role="tab" data-go="2" aria-selected="false"><b>3</b> 어디로, 언제?</button></li>
+  </ol>
+
+  <fieldset class="wstep" data-step="0">
+    <legend class="sr">누가 가나요?</legend>
+    <p class="hint">해당하는 것을 모두 누르세요. 없으면 ‘해당 없음’ 그대로 두면 돼요.</p>
+    <div class="field"><h3>걷기·이동</h3>{{ opts("mob", wiz.mobility, sel=v.mob or ["none"], excl=True) }}</div>
+    <div class="field cols">
+      <div><h3>눈</h3>{{ opts("vis", wiz.vision, sel=v.vis or ["none"], excl=True) }}</div>
+      <div><h3>귀</h3>{{ opts("hear", wiz.hearing, sel=v.hear or ["none"], excl=True) }}</div>
+      <div><h3>인지·발달</h3>{{ opts("cog", wiz.cognition, sel=v.cog or ["none"], excl=True) }}</div>
+    </div>
+    <div class="field"><h3>꼭 필요한 것</h3>{{ opts("needs", wiz.needs, sel=v.needs or ["none"], excl=True) }}</div>
+    <details class="more-in"><summary>더 알려 주실 것 (선택)</summary>
+      <div class="field cols">
+        <label class="txt">직접 적어 주세요<input name="extra" value="{{ v.extra or '' }}" placeholder="예: 보청기를 써요, 차에 1시간 이상 못 앉아요"></label>
+        <label class="txt">함께 가는 사람(본인 포함)<input name="people" type="number" min="1" max="20" value="{{ v.people or 1 }}"></label>
+      </div>
+    </details>
+  </fieldset>
+
+  <fieldset class="wstep" data-step="1" hidden>
+    <legend class="sr">어떻게 다닐까요?</legend>
+    <div class="field"><h3>다닐 방법</h3>{{ opts("trans", wiz.transport, multi=False, sel=v.trans or "car") }}</div>
+    <div class="field"><h3>한 번에 차·버스를 탈 수 있는 시간</h3>
+      {{ opts("ride", {"0": "상관없어요", "30": "30분", "45": "45분", "60": "60분", "90": "90분"}, multi=False, sel=v.ride or "0") }}
+      <p class="hint">코스의 어떤 이동도 이 시간을 넘지 않게 짜요.</p></div>
+    <div class="field"><h3>출발지 (선택)</h3>
+      <select name="origin" class="sel">{% for o in wiz.origins %}<option {{ 'selected' if o == (v.origin or '모름') }}>{{ o }}</option>{% endfor %}</select>
+      <p class="hint">1일차를 여기서 출발한다고 보고 첫 이동 시간을 계산해요.</p></div>
+  </fieldset>
+
+  <fieldset class="wstep" data-step="2" hidden>
+    <legend class="sr">어디로, 언제?</legend>
+    <div class="field cols">
+      <label class="txt">지역<select name="region" class="sel">{% for o in wiz.regions %}<option {{ 'selected' if o == (v.region or '제주 전체') }}>{{ o }}</option>{% endfor %}</select></label>
+      <label class="txt">출발일<input type="date" name="start" min="{{ wiz.today }}" value="{{ v.start or wiz.today }}"></label>
+    </div>
+    <div class="field"><h3>여행 일수</h3>{{ opts("days", {"1": "1일", "2": "2일", "3": "3일", "4": "4일", "5": "5일"}, multi=False, sel=v.days or "2") }}</div>
+    <div class="field"><h3>좋아하는 곳 (선택)</h3>{{ opts("int", wiz.interests, sel=v.int or []) }}</div>
+    <div class="field"><h3>무엇을 할까요?</h3>{{ opts("what", {"course": "코스 짜기", "access": "갈 만한 곳만 보기"}, multi=False, sel=v.what or "course") }}</div>
+    <div class="field" data-when="course"><h3>코스에 함께 넣을 곳</h3>{{ opts("extras", wiz.extras, sel=v.extras or ["lunch", "lodging"]) }}
+      <p class="hint">휠체어로 들어갈 수 있다고 조사·기재된 식당·숙소 중 코스 장소 가까운 곳을 넣어요. 휠체어 화장실이 필요하면 화장실 있는 식당을 먼저 골라요.</p></div>
+  </fieldset>
+
+  <div class="wnav">
+    <button class="btn" type="button" data-prev>이전</button>
+    <span class="wspacer"></span>
+    <button class="btn quiet" type="submit" data-now>이대로 바로 시작</button>
+    <button class="btn primary" type="button" data-next>다음</button>
+    <button class="btn primary" type="submit" data-start hidden>코스 찾기 시작</button>
+  </div>
+</form>

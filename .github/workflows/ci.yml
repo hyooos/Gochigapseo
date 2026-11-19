@@ -1,0 +1,41 @@
+# PR(브랜치 무관)·main/dev push마다 Windows(센터 PC와 같은 OS)에서 설치→테스트→키 유출 검사를 돌린다.
+# Mac은 무료 시간 절약을 위해 제외. Mac 사용자는 PR 전에 자기 PC에서 pytest를 돌린다.
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress : true
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      PYTHONUTF8: "1"          # Windows 콘솔 한글 깨짐 방지
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: 의존성 설치 (requirements.txt에 적힌 것만)
+        run: python -m pip install -r requirements-dev.txt
+      - name: 합성 데이터 생성기 동작 확인 (저장소의 data/sample 은 덮어쓰지 않음)
+        run: python -c "from jeju_agent.data.synthetic import SPECS, generate; d=generate(); assert len(d['places'])==len(SPECS)+1"
+      - name: 테스트
+        run: python -m pytest
+      - name: 키·개인정보·샘플 출력 검사
+        run: python scripts/check_secrets.py
+      - name: 앱 기동 확인
+        run: python -c "from fastapi.testclient import TestClient; from web.server import app; r=TestClient(app).get('/'); assert r.status_code == 200, r.status_code"

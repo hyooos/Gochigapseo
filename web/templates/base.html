@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ app_name }} — {{ tagline }}</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="{{ static }}/css/app.css?v={{ ver }}">
+</head>
+<body data-has-result="{{ 1 if has_result else 0 }}">
+<header class="top">
+  <div class="top-in">
+    <a href="/new" class="brand" data-new aria-label="{{ app_name }} 처음 화면으로" title="처음 화면으로(새로 시작)"><img src="{{ static }}/img/logo_small.png" alt="{{ app_name }}"
+       width="88" height="60"><span class="brand-sub">{{ tagline }}</span></a>
+    <nav class="nav"><a href="/new" data-new>처음으로</a>{% if has_result %}<a href="/#main">지금 결과</a>{% endif %}<a href="/settings">센터 자료·설정</a></nav>
+    <div class="view" role="group" aria-label="보기 설정">
+      <button class="toggle" type="button" aria-pressed="false" data-view="bigtext">큰 글씨</button>
+      <button class="toggle" type="button" aria-pressed="false" data-view="contrast">고대비</button>
+      <button class="toggle" type="button" aria-pressed="false" data-view="cvd">색 구별 쉽게</button>
+      <p class="view-msg" id="viewMsg" role="status" hidden></p>
+    </div>
+  </div>
+</header>
+<main id="main">
+{% block main %}{% endblock %}
+<footer class="foot"><p>{{ footer }}</p><p>입력한 몸 상태·조건은 이 화면의 계산에만 쓰고 저장하지 않아요.</p></footer>
+</main>
+<script src="{{ static }}/js/app.js?v={{ ver }}" defer></script>
+</body>
+</html>

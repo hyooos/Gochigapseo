@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block main %}
+<p><a href="/">← 여행 화면으로</a></p>
+<h1 class="pgt">센터 자료·설정</h1>
+<p class="sub">센터 직원·운영자용 화면이에요.</p>
+
+<section class="section"><h2>시스템</h2>
+  <dl class="kv wide">
+    <dt>관광지 자료</dt><dd>[실데이터] 제주데이터허브 무장애 조사 자료</dd>
+    <dt>LLM</dt><dd>{% if llm.llm_enabled %}API · {{ llm.llm_model }}{% else %}키 없음 — 키 없이도 모든 분석 기능이 동작해요(정해진 문장과 버튼){% endif %}</dd>
+    {% if cost %}<dt>이번 달 LLM 예상 비용</dt><dd>{{ cost }} (월 상한 ${{ budget }})</dd>{% endif %}
+    <dt>카카오맵</dt><dd>{{ llm.kakao_map }}</dd>
+  </dl>
+  <p class="sub">API 키는 프로그램 폴더의 .env 파일에 넣어요(docs/llm-setup.md). API 모드에서는 질문 문장과 조건 요약이 외부 LLM으로 전송돼요.</p>
+</section>
+
+<section class="section"><h2>센터 자료 넣기</h2>
+  <p>센터 조회 사이트에서 CSV로 내려받아 넣으면 코스에 여행 달의 날씨 위험과 버스 정류소 거리가 더해져요. 넣지 않아도 모든 기능이 동작해요.
+     비율·거리 같은 집계값만 만들고 원본 행은 화면·외부 LLM으로 보내지 않아요.</p>
+  <div class="tbl"><table><thead><tr><th>표</th><th>이름</th><th>받는 기간</th><th>파일</th><th>행</th><th>자료</th><th>넣기</th></tr></thead><tbody>
+  {% for c in center %}<tr><td>{{ c.no }}</td><td>{{ c.name }}</td>
+    <td>{{ {"weather_stations": "기간 상관없음(최신 1개월)", "weather_daily": "여행할 달과 같은 달, 최근 2~3년(1개월씩 여러 번)", "bus_stops": "최신 1개월"}.get(c.t, "") }}</td>
+    <td>{{ c.files }}</td><td>{{ c.rows if c.rows is not none else "-" }}</td><td>{{ c.label }}</td>
+    <td><form class="upload" data-table="{{ c.t }}"><input type="file" name="files" accept=".csv" multiple aria-label="{{ c.name }} CSV"><button class="btn" type="submit">넣기</button></form></td></tr>{% endfor %}
+  </tbody></table></div>
+  <p id="upMsg" class="sub" role="status"></p>
+  <form method="post" action="/api/center-clear"><button class="btn" type="submit">넣은 센터 자료 지우기</button></form>
+</section>
+
+<section class="section"><h2>내 분석 자료 모두 지우기</h2>
+  <p>이번 사용 기록, 내려받기 파일, 넣은 센터 CSV, LLM 응답 캐시를 모두 지워요. 되돌릴 수 없어요.</p>
+  <form method="post" action="/api/reset" onsubmit="return confirm('모두 지울까요? 되돌릴 수 없어요.')"><button class="btn danger" type="submit">모두 지우기</button></form>
+</section>
+{% endblock %}

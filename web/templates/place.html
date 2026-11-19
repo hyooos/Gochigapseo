@@ -1,0 +1,75 @@
+{% import "_macros.html" as m %}
+{% set c = d.card %}
+<div class="dlg">
+  <div class="dlg-top">
+    {{ m.photo(c.photo, c.name, "big") }}
+    <div>
+      {% if d.stop %}<p class="sub">{{ d.stop.day }}일차 {{ d.stop.order }}번째</p>{% endif %}
+      <div class="t"><h2>{{ c.name }}</h2>{{ m.vbadge(c.verdict) }}</div>
+      {% if c.where or c.fee %}<p class="where">{{ c.where }}{% if c.where and c.fee %}, {% endif %}{{ c.fee or '' }}</p>{% endif %}
+      <div class="row">{{ m.pills(c.facilities) }}</div>
+      {% if d.stop and d.stop.why %}<h3>왜 골랐나요</h3><ul>{% for w in d.stop.why %}<li>{{ w }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+  </div>
+
+  {% if d.checks %}
+  <section class="dsec"><h3>확인할 점 <span class="sub">{{ d.checks.title }}</span></h3>
+    <dl class="kv">{% for i in d.checks.rows %}<dt><span class="f {{ i.cls }}">{{ i.mark }} {{ i.label }}</span></dt><dd>{{ i.text }}</dd>{% endfor %}</dl>
+    {% if d.checks.need_call %}<p class="callout">이동 조건에 중요한 정보가 자료에 없어요. 아래 ‘전화로 물어볼 말’ 첫 질문을 꼭 물어보세요.</p>{% endif %}
+  </section>{% endif %}
+
+  {% if d.stop and d.stop.guide %}
+  <section class="dsec"><h3>가는 길</h3><dl class="kv">
+    {% if d.stop.guide.route %}<dt>추천 동선</dt><dd>{{ d.stop.guide.route }}</dd>{% endif %}
+    {% if d.stop.guide.parking %}<dt>주차</dt><dd>{{ d.stop.guide.parking }}</dd>{% endif %}
+    {% if d.stop.guide.toilet %}<dt>휠체어 화장실</dt><dd>{{ d.stop.guide.toilet }}</dd>{% endif %}
+  </dl></section>{% endif %}
+
+  {% if d.extras %}
+  <section class="dsec"><h3>이 장소 다음 식사</h3>
+    {% for f in d.extras %}<div class="stopby meal inline"><div class="box"><p><span class="k">{{ f.slot }}</span> <span class="nm">{{ f.name }}</span></p>
+      <p class="d">{{ f.where }}</p><p class="d"><span class="f {{ f.toilet_cls }}">{{ f.toilet }}</span>{% if f.phone %} 전화 {{ f.phone }}{% endif %}</p>
+      {% if f.entry %}<p class="d">{{ f.entry }}</p>{% endif %}</div></div>{% endfor %}
+  </section>{% endif %}
+
+  <section class="dsec"><h3>시설 (조사 원문)</h3><dl class="kv">{% for k, v in d.facilities %}<dt>{{ k }}</dt><dd>{{ v }}</dd>{% endfor %}</dl></section>
+
+  {% if d.barriers %}<section class="dsec"><h3>기록된 장애물</h3><p>{{ d.barriers | join(", ") }}</p>
+    {% if d.barrier_spots %}<p class="sub">기록된 곳: {{ d.barrier_spots | join(", ") }}</p>{% endif %}</section>{% endif %}
+
+  {% if d.info %}<section class="dsec"><h3>현장 안내 (조사 당시)</h3><dl class="kv">{% for k, v in d.info %}<dt>{{ k }}</dt><dd>{{ v }}</dd>{% endfor %}</dl></section>{% endif %}
+
+  {% if d.nearby %}<section class="dsec"><h3>근처 휠체어로 들어갈 수 있다고 조사된 가게</h3>
+    <ul class="near">{% for n in d.nearby %}<li><b>{{ n.name }}</b> {{ n.text }}{% if n.phone %}, 전화 {{ n.phone }}{% endif %}</li>{% endfor %}</ul>
+    <p class="sub">2021년 조사라 지금은 다를 수 있어요. 가기 전에 전화로 확인하세요.</p></section>{% endif %}
+
+  {% if d.photos %}<section class="dsec"><h3>조사 사진 {{ d.photos | length }}장</h3>
+    <div class="gallery">{% for p in d.photos %}<figure><img src="{{ p.url }}" alt="{{ c.name }} 사진: {{ p.caption or '설명 없음' }}" loading="lazy"><figcaption>{{ p.caption }}</figcaption></figure>{% endfor %}</div>
+  </section>{% endif %}
+
+  {% if d.online %}{% set o = d.online %}
+  <section class="dsec"><h3>주변에 뭐가 있나요? <span class="sub">공개 자료, 직선거리</span></h3>
+    <div class="around">
+      <div><h4>볼거리</h4>{% if o.sights %}<ul>{% for x in o.sights %}<li><a href="{{ x.url }}" target="_blank" rel="noopener">{{ x.title }}</a> {{ x.km }}km</li>{% endfor %}</ul>
+        {% else %}<p class="sub">찾지 못했어요</p>{% endif %}</div>
+      <div><h4>먹을 곳</h4>{% if o.food %}<ul>{% for x in o.food %}<li>{% if x.url %}<a href="{{ x.url }}" target="_blank" rel="noopener">{{ x.name }}</a>{% else %}{{ x.name }}{% endif %}
+        <span class="sub">{{ x.type }} · {{ (x.km * 1000) | int }}m{% if x.phone %} · {{ x.phone }}{% endif %}</span></li>{% endfor %}</ul>
+        {% else %}<p class="sub">{{ '검색 서버가 응답하지 않아요' if o.failed else '근처(2km)에서 찾지 못했어요' }}</p>{% endif %}</div>
+      <div><h4>숙소</h4>{% if o.stay %}<ul>{% for x in o.stay %}<li>{{ x.name }} <span class="sub">{{ x.km }}km{% if x.phone %} · {{ x.phone }}{% endif %}</span></li>{% endfor %}</ul>
+        {% else %}<p class="sub">{{ '검색 서버가 응답하지 않아요' if o.failed else '근처(2km)에서 찾지 못했어요' }}</p>{% endif %}</div>
+    </div>
+    {% if o.photos %}<div class="gallery small">{% for ph in o.photos %}<figure><img src="{{ ph.thumb }}" alt="주변 공개 사진" loading="lazy">
+      <figcaption><a href="{{ ph.page }}" target="_blank" rel="noopener">{{ ph.author }}</a></figcaption></figure>{% endfor %}</div>{% endif %}
+    <p class="sub">이 검색 자료에는 휠체어로 들어갈 수 있는지가 없어요. 가기 전에 전화로 확인하세요.
+      볼거리·사진: 위키백과·위키미디어 공용 · 가게: {{ '카카오 장소 검색' if o.kakao else '© OpenStreetMap 기여자(Photon)' }}</p>
+  </section>{% endif %}
+
+  <section class="dsec"><h3>전화로 물어볼 말</h3><ol class="calls">{% for q in d.calls %}<li>{{ q }}</li>{% endfor %}</ol></section>
+
+  <div class="actions">
+    <a class="btn" href="{{ d.links.kakao }}" target="_blank" rel="noopener">카카오맵에서 보기</a>
+    <a class="btn" href="{{ d.links.food }}" target="_blank" rel="noopener">근처 맛집 더 보기</a>
+    <a class="btn" href="{{ d.links.stay }}" target="_blank" rel="noopener">근처 숙소 더 보기</a>
+  </div>
+  <p class="sub src">{{ d.source }}</p>
+</div>

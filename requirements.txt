@@ -1,0 +1,15 @@
+# BOAZ Jeju Agent — 실행 의존성 (Python 3.12)
+# ⚠️ 센터 PC에는 기획서에 미리 적은 패키지만 설치된다.
+#    여기 줄을 추가·변경하면 기획서 "설치 프로그램 목록"과 docs/architecture.md도 같은 PR에서 고친다.
+pandas==3.1.1            # 표 처리
+numpy==2.4.6
+matplotlib==3.11.2       # 보고서용 PNG 차트·코스 지도
+openai==3.46.0           # LLM 호출 (OpenAI·OpenRouter·Gemini·Claude 모두 base_url로 교체), 선택 기능 음성 인식
+pydantic==2.14.3         # 에이전트 입출력 규격 검증
+python-dotenv==1.2.4     # .env 읽기
+pyyaml==6.0.3            # 설정·판정 기준·골든셋 파일
+charset-normalizer==3.5.2  # 공개 CSV 인코딩(CP949/UTF-8) 감지
+fastapi==0.163.2         # 새 화면 서버(web/, PC 안에서만 127.0.0.1)
+uvicorn==0.54.0          # 새 화면 서버 실행
+jinja2==3.1.6            # 새 화면 HTML 템플릿
+python-multipart==0.0.34 # 새 화면 센터 CSV 올리기

@@ -1,0 +1,37 @@
+{% import "_macros.html" as m %}
+<div class="grid">
+  {% if r.map %}
+  <div class="mapcol">
+    <figure class="mapbox" style="margin:0">
+      {% if r.kakao %}<div class="maptabs" role="tablist" aria-label="지도 종류">
+        <button type="button" role="tab" aria-selected="true" data-maptab="art">그림 지도</button>
+        <button type="button" role="tab" aria-selected="false" data-maptab="kakao">카카오 지도(실제 길)</button></div>{% endif %}
+      <div class="mapart">{{ r.map | safe }}
+      <div class="zoombar" role="group" aria-label="지도 확대·축소">
+        <button type="button" data-zoom="in" aria-label="확대">+</button><button type="button" data-zoom="out" aria-label="축소">−</button>
+        <button type="button" data-zoom="reset" class="txt">처음 위치</button></div>
+        <p class="zoomhint">마우스 휠로 확대·축소, 끌어서 이동</p></div>
+      {% if r.kakao %}<iframe class="mapkakao" title="카카오 지도" hidden data-srcdoc="{{ r.kakao }}"></iframe>{% endif %}
+      <figcaption class="mapkey"><span><i class="k-v ok"></i>○ 적합</span><span><i class="k-v warn"></i>△ 주의(확인하고 가기)</span>
+        <span>숫자는 추천 순서</span></figcaption>
+    </figure>
+  </div>
+  {% endif %}
+  <ol class="plist">
+    {% for c in r.cards %}
+    <li class="pcard place" data-num="{{ c.num }}" style="--day: var(--{{ 'ok' if c.verdict.cls == 'ok' else 'warn' }})">
+      <span class="seq">{{ c.num }}</span>
+      <article class="card">
+        {{ m.photo(c.photo, c.name) }}
+        <div>
+          <div class="t"><h3>{{ c.name }}</h3>{{ m.vbadge(c.verdict) }}</div>
+          {% if c.where or c.fee %}<p class="where">{{ c.where }}{% if c.where and c.fee %}, {% endif %}{{ c.fee or '' }}</p>{% endif %}
+          <div class="row">{{ m.pills(c.facilities) }}{% if c.call %}<span class="call">방문 전 전화 확인</span>{% endif %}</div>
+          {% if c.barriers %}<p class="barrier">기록된 장애물: {{ c.barriers | join(", ") }}</p>{% endif %}
+          <button class="btn quiet more" type="button" data-open="{{ c.place_id }}" data-key="{{ r.key }}">자세히 보기</button>
+        </div>
+      </article>
+    </li>
+    {% endfor %}
+  </ol>
+</div>

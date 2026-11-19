@@ -1,0 +1,14 @@
+[project]
+name = "boaz-jeju-agent"
+version = "0.2.0"
+description = "제주 무장애 여행·현황 분석 AI Agent (장애인·고령자·유아차 동반 등 이동 약자)"
+requires-python = ">=3.12,<3.13"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore:Glyph .* missing from font:UserWarning"]
+markers = [
+    "golden: 골든 질문셋 회귀 테스트",
+    "network: 인터넷·API 키가 필요한 테스트 (CI에서는 건너뜀)",
+]

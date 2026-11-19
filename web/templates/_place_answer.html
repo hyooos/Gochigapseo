@@ -1,0 +1,20 @@
+{% import "_macros.html" as m %}
+{% if r.fact %}
+<div class="fact">
+  <p class="fact-what">{{ r.fact.what }}</p>
+  <p class="fact-state">{{ r.fact.state }}</p>
+  {% if r.fact.basis %}<p class="sub">{{ r.fact.basis }}</p>{% endif %}
+  {% if r.fact.date %}<p class="sub">자료 기준일 {{ r.fact.date }} — 현장이 바뀌었을 수 있어 방문 전 확인</p>{% endif %}
+</div>
+{% endif %}
+{% if r.card %}{% set c = r.card %}
+<article class="card single">
+  {{ m.photo(c.photo, c.name) }}
+  <div>
+    <div class="t"><h3>{{ c.name }}</h3>{{ m.vbadge(c.verdict) }}</div>
+    {% if c.where or c.fee %}<p class="where">{{ c.where }}{% if c.where and c.fee %}, {% endif %}{{ c.fee or '' }}</p>{% endif %}
+    <div class="row">{{ m.pills(c.facilities) }}{% if c.call %}<span class="call">방문 전 전화 확인</span>{% endif %}</div>
+    <button class="btn quiet more" type="button" data-open="{{ c.place_id }}" data-key="{{ r.key }}">자세히 보기</button>
+  </div>
+</article>
+{% endif %}

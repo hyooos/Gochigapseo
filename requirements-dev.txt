@@ -1,0 +1,4 @@
+# 개발·테스트 전용 (센터 PC에는 설치하지 않음)
+-r requirements.txt
+pytest==9.2.0
+python-calamine==0.9.1   # 원본 xlsx 변환(scripts/convert_raw.py)용. 에이전트 실행에는 필요 없음
