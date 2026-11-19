@@ -9,7 +9,7 @@
 
 **제주 AI·빅데이터 활용 AI Agent 개발 챌린지 출품작**
 
-[대회 소개](https://daker.ai/public/hackathons/jeju-ai-bigdata-agent-challenge) · [사용자 매뉴얼](_링크 추가_) · [구조와 규격](docs/architecture.md) · [LLM 키 설정](docs/llm-setup.md)
+[대회 소개](https://daker.ai/public/hackathons/jeju-ai-bigdata-agent-challenge) · [사용자 매뉴얼](docs/how-to-run.md) · [구조와 규격](docs/architecture.md) · [LLM 키 설정](docs/llm-setup.md) · [시연 영상](https://youtu.be/r9wyy93tS6Q)
 
 ![고치갑서 메인 화면](docs/images/main.png)
 
