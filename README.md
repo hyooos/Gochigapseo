@@ -17,7 +17,7 @@
 
 ---
 
-## 📌 Overview
+## Overview
 
 **고치갑서**('같이 가요'라는 뜻의 제주어)는 휠체어·보행기·유아차를 쓰거나 오래 걷기 힘든 여행자, 눈·귀가 불편한 여행자가 제주에서 **이동 여건에 맞는 여행지**를 찾고 이동 편의성을 고려한 **맞춤형 여행 코스**를 계획할 수 있도록 돕는 AI Agent입니다.
 
@@ -34,7 +34,7 @@
 | "제주시 읍면동별 장애인 화장실 현황" (기관 실무자) | 지역별 시설 확인 비율·정보 공백·자료 노후도·보완 우선 지역, 보고서와 PNG 차트 |
 | "오늘 성산일출봉 지금 붐벼?" | 실시간 근거가 없다고 밝히고 할 수 있는 일을 안내 |
 
-## ✨ Key Features
+##  Key Features
 
 | 기능 | 설명 |
 | --- | --- |
@@ -50,7 +50,7 @@
 | 접근성 화면 | 큰 글씨 · 고대비 · 색 구별 쉽게(○ △ × 기호 병기) · 답변 읽어 주기(브라우저 내장 음성) · 키보드 초점 표시 |
 | 센터 자료·설정 (운영자용) | 제주빅데이터센터 CSV(날씨·버스 정류소)를 넣으면 비 온 날 비율·정류소 거리가 더해짐. LLM 비용 확인, 분석 자료 모두 지우기 |
 
-## 🖼️ Service Preview
+##  Service Preview
 
 > 화면별 자세한 사용법은 [사용자 매뉴얼](링크 추가)에 있습니다. 여기에는 핵심 기능 화면만 싣습니다.
 
@@ -88,15 +88,15 @@
 
 <p align="center"><img src="docs/images/share-itinerary.png" alt="가족에게 보낼 일정표" width="420"></p>
 
-## 🔄 Service Workflow
+##  Service Workflow
 
-![고치갑서 workflow](docs/images/workflow.png)
+<img width="4192" height="2632" alt="image" src="https://github.com/user-attachments/assets/2b846cfa-ccc9-46de-b2ef-727c72c1ee54" />
 
 - 하위 에이전트(데이터 탐색·접근성 진단·코스 설계·현황 분석)는 **LLM이 도구와 조건을 고르고, 규칙이 울타리**가 됩니다. 핵심 자료를 빼거나 반출 불가 표를 고르거나 안전 기준을 바꾸는 판단은 막힙니다.
 - 키가 없거나 LLM 호출이 실패하면 같은 계산을 규칙 흐름으로 합니다.
 - 자세한 흐름과 입출력 규격: [docs/architecture.md](docs/architecture.md), [jeju_agent/contracts.py](jeju_agent/contracts.py)
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | 구분 | 기술 및 버전 |
 | --- | --- |
@@ -108,7 +108,7 @@
 
 실행 패키지는 [requirements.txt](requirements.txt)의 12개뿐입니다(센터 PC에는 기획서에 적은 패키지만 설치됩니다).
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 BOAZ_Jeju/
@@ -138,7 +138,7 @@ BOAZ_Jeju/
 └── docs/                         # 구조, 실행, LLM 설정, 화면 이미지
 ```
 
-## 🚀 Installation & Run
+##  Installation & Run
 
 ### Windows (센터 PC와 같은 방법)
 
@@ -175,7 +175,7 @@ GitHub 저장소에서는 `python scripts/ask.py "질문"`(터미널에서 바�
 
 자세히: [docs/how-to-run.md](docs/how-to-run.md)
 
-## 🗃️ Data & External Services
+##  Data & External Services
 
 | 자료 / 서비스 | 출처 / 역할 | 비고 |
 | --- | --- | --- |
@@ -206,20 +206,20 @@ GitHub 저장소에서는 `python scripts/ask.py "질문"`(터미널에서 바�
 | 이동 시간에 '추정'이 붙음 | `KAKAO_REST_KEY`, 이동 수단 | 버스는 항상 추정. 자가용·택시는 REST 키를 넣으면 실제 도로 시간 |
 | 사진·지도 배경·글꼴이 안 보임 | 인터넷 연결 | 인터넷이 없으면 점 지도·기본 글꼴로 표시 (보고서 PNG는 저장소의 글꼴로 그림) |
 
-## 🚧 Limitations
+##  Limitations
 
 - 무장애 조사 자료는 **2020~2021년** 기록입니다. 현장 시설이 바뀌었을 수 있어 '적합'도 **방문 전 전화 확인**을 함께 안내합니다.
 - '정보 없음'은 '없음'이 아닙니다. 조사 기록이 빈 시설은 회색 '?'로 표시하고 확인할 말을 드립니다.
 - 키가 없을 때와 버스 코스의 이동 시간은 직선거리 기반 추정치라 실제 경로와 다를 수 있습니다.
 - 식당·숙소 영업 여부는 자료 기준일 이후 바뀌었을 수 있습니다.
 
-## 💻 Deployment & Evaluation Environment
+##  Deployment & Evaluation Environment
 
 결과물은 이용자가 **제주빅데이터센터에 방문해 센터 PC에서 실행**합니다.
 
 고치갑서는 로컬 모델을 쓰지 않아 GPU가 필요 없고, Python 3.12와 패키지 12개만 설치합니다. 센터 데이터는 Agent가 직접 연결하지 않고, 이용자가 센터 조회 사이트에서 **CSV로 내려받아 '센터 자료·설정' 화면에서 넣어 사용합니다.**
 
-## 📚 Documentation
+##  Documentation
 
 | 문서 | 내용 |
 | --- | --- |
